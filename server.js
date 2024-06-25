@@ -31,7 +31,7 @@ app.use(cors())
 app.use(bodyparser.json())
 app.use(bodyparser.urlencoded({extended:false}))
 app.use(express.json())
- app.use(morgan("dev"));
+app.use(morgan("dev"));
 
 
 //google login
@@ -110,9 +110,9 @@ const options = {
 //delete user 
  app.delete('/user/:id',async(req,res)=>{
     let a=req.params.id;
-    let data= await billmodel.deleteOne({_id:a})
+    let data= await billmodel.deleteOne({_id:a});
     res.send(data)
-    console.log(a)
+    console.log(a);
  })
 
 //routes
