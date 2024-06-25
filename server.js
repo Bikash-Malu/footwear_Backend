@@ -1,7 +1,7 @@
 const express=require('express');
 const morgan=require('morgan')
 const bodyparser=require('body-parser')
-const billmodel=require('../backend/models/billmodel')
+const billmodel=require("./models/billmodel")
 const usermodel=require('./models/User')
 const cors=require('cors')
 const dotenv=require('dotenv')
@@ -22,7 +22,7 @@ dotenv.config();
 coonectdb()
 
 //port
-const PORT=process.env.PORT||1200
+const PORT=process.env.PORT||1201
 //rest object
 const app=express()
 
@@ -53,59 +53,59 @@ app.use(session(
 app.use(passport.initialize())
 app.use(passport.session())
 
-passport.use(
-    new auth(
-        {
-            clientID:process.env.CLIENT_ID,
-            clientSecret:process.env.CLIENT_SECRET,
-            callbackURL:"/auth/google",
-            scope:["profile","email"]
-        },
-        async(accessToken,refreshToken,profile,callback)=>{
-            try{
-                let user=await usermodel.findOne({googleid:profile.id})
-                return callback(null,user);
-            }
-            catch(error){
-                return callback(error,null);
-            }
+// passport.use(
+//     new auth(
+//         {
+//             clientID:process.env.CLIENT_ID,
+//             clientSecret:process.env.CLIENT_SECRET,
+//             callbackURL:"/auth/google",
+//             scope:["profile","email"]
+//         },
+//         async(accessToken,refreshToken,profile,callback)=>{
+//             try{
+//                 let user=await usermodel.findOne({googleid:profile.id})
+//                 return callback(null,user);
+//             }
+//             catch(error){
+//                 return callback(error,null);
+//             }
             
-        }
-    )
-)
+//         }
+//     )
+// )
 
 
-//swagger configuration
-const options = {
-    definition: {
-      openapi: '3.0.1',
-      info: {
-        title: 'Mini Blog API',
-        description: "API endpoints for a mini blog services documented on swagger",
-        contact: {
-          name: "bikash",
-          email: "info@miniblog.com",
-          url: "https://github.com/DesmondSanctity/node-js-swagger"
-        },
-        version: '1.0.0',
-      },
-      servers: [
-        {
-          url: "http://localhost:1200",
-          description: "Local server"
-        },
-        {
-          url: "<your live url here>",
-          description: "Live server"
-        },
-      ]
+// //swagger configuration
+// const options = {
+//     definition: {
+//       openapi: '3.0.1',
+//       info: {
+//         title: 'Mini Blog API',
+//         description: "API endpoints for a mini blog services documented on swagger",
+//         contact: {
+//           name: "bikash",
+//           email: "info@miniblog.com",
+//           url: "https://github.com/DesmondSanctity/node-js-swagger"
+//         },
+//         version: '1.0.0',
+//       },
+//       servers: [
+//         {
+//           url: "http://localhost:1200",
+//           description: "Local server"
+//         },
+//         {
+//           url: "<your live url here>",
+//           description: "Live server"
+//         },
+//       ]
     
-    },
-    apis: ['./routes/itemRoute.js'], // files containing annotations as above
-  };
+//     },
+//     apis: ['./routes/itemRoute.js'], // files containing annotations as above
+//   };
   
-  const openapiSpecification = swaggerjsdocx(options);
-  app.use('/api-docs',swaggerui.serve,swaggerui.setup(openapiSpecification))
+//   const openapiSpecification = swaggerjsdocx(options);
+//   app.use('/api-docs',swaggerui.serve,swaggerui.setup(openapiSpecification))
 
 //delete user 
  app.delete('/user/:id',async(req,res)=>{
