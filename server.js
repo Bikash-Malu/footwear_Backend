@@ -37,7 +37,7 @@ app.use(morgan("dev"));
 //google login
 app.use(
     cors({
-        origin:'http://localhost:3000',
+        origin:'https://footwear-frontend-xi.vercel.app/',
         methods:"GET,POST,DELETE,PUT",
         credentials:true
     })
