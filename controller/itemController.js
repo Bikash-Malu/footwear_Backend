@@ -101,58 +101,87 @@ const search=async(req,res)=>{
     }
 
 }
-const addbills=async(req,res)=>
-{
-    try{
-        const data=req.body;
-        const d = new Date();
-        let text = d.toLocaleString();
-        const items= await new billmodel(data).save()
-        res.status(200).send(items)
-        const client=await new twilio(process.env.TWILIO_SILD,process.env.TWILIO_AUTH)
-        console.log(req.body.message)
-        client.messages.create({
-            from:'whatsapp:+14155238886',
-            body:`${data.CustomerName} bill is created sucessfully with amount ${data.total}/- at ${text}`,
-            to:'whatsapp:+919583856595',
-        }).then((res1)=>
-            res.send('send successfully')
-        ).catch((err)=>
-            console.log('send unsuccessfully')
-        )
-        }
-        catch(error){
-            console.log(error)
-            res.status(400).send("can not be add")
-        }
-        const data=req.body;
-        const transporter = nodemailer.createTransport({
-            host: 'smtp.gmail.com',
-            port: 587,
-            secure:false,
-            requireTLS:true,
-            auth: {
-                user: 'bikashmalu1@gmail.com',
-                pass: 'fkgdymbfaqklrcln'
-            }
-        });
-        const info ={
-            from: 'bikashmalu1@gmail.com',
-            to: req.body.email, 
-            subject: "BALA FOOTWEAR",
-            text: "hii everyone tuhina is cute",
-            html: `Thank you ${data.CustomerName},for purchasing products with amount ${data.total} from the bala footwear store. Thank you visit again!!`, 
-          };
-    transporter.sendMail(info,(err,result)=>{
-        if(err){
-            res.status(400).send(err)
-        }
-        else{
-            res.status(200).send(result.response);
-        }
-    })
+const addbills = async (req, res) => {
+  try {
+    const data = req.body;
+    const d = new Date();
+    let timestamp = d.toLocaleString();
 
-}
+    // Save bill data to the database
+    const bill = await new billmodel(data).save();
+    res.status(200).send(bill);
+
+    // Send WhatsApp message via Twilio
+    const client = new twilio(process.env.TWILIO_SID, process.env.TWILIO_AUTH);
+    await client.messages.create({
+      from: 'whatsapp:+14155238886',
+      body: `${data.CustomerName}, your bill has been successfully created with an amount of ₹${data.total}/- at ${timestamp}`,
+      to: 'whatsapp:+919583856595',
+    });
+
+    // Send a stylish email with Nodemailer
+    const transporter = nodemailer.createTransport({
+      host: 'smtp.gmail.com',
+      port: 587,
+      secure: false,
+      requireTLS: true,
+      auth: {
+        user: 'bikashmalu1@gmail.com',
+        pass: 'fkgdymbfaqklrcln',
+      },
+    });
+
+const emailTemplate = `
+  <div style="font-family: Arial, sans-serif; color: #333; line-height: 1.6;">
+    <div style="text-align: center;">
+      <img src="https://d1csarkz8obe9u.cloudfront.net/posterpreviews/thank-you-for-shopping-with-us-flyer-design-template-310398c8721e6c754bd88c65129be38f_screen.jpg?ts=1618347818" alt="Thank You Image" style="max-width: 100%; height: auto;">
+    </div>
+    <h2 style="color: #2C3E50;">Thank you, ${data.CustomerName}!</h2>
+    <p>We appreciate your purchase at Bala Footwear. Here are the details of your transaction:</p>
+    <table style="width: 100%; border-collapse: collapse;">
+      <tr>
+        <td style="padding: 8px; border: 1px solid #ddd;"><strong>Customer Name:</strong></td>
+        <td style="padding: 8px; border: 1px solid #ddd;">${data.CustomerName}</td>
+      </tr>
+      <tr>
+        <td style="padding: 8px; border: 1px solid #ddd;"><strong>Total Amount:</strong></td>
+        <td style="padding: 8px; border: 1px solid #ddd;">₹${data.total}</td>
+      </tr>
+      <tr>
+        <td style="padding: 8px; border: 1px solid #ddd;"><strong>Date:</strong></td>
+        <td style="padding: 8px; border: 1px solid #ddd;">${timestamp}</td>
+      </tr>
+    </table>
+    <p>Thank you for shopping with us. We hope to see you again soon!</p>
+    <p>Best regards,<br><strong>Bala Footwear Team</strong></p>
+    <hr style="border-top: 1px solid #ddd;">
+    <div style="text-align: center;">
+      <img src="https://example.com/path/to/your/logo.png" alt="Bala Footwear Logo" style="max-width: 200px;">
+      <p style="margin-top: 10px; font-size: 14px; color: #888;">Contact us: +91-9583856595 | <a href="mailto:bikashmalu1@gmail.com">support@balafootwear.com</a></p>
+    </div>
+  </div>
+`;
+
+
+    const mailOptions = {
+      from: 'bikashmalu1@gmail.com',
+      to: data.email,
+      subject: 'Thank you for your purchase!',
+      html: emailTemplate,
+    };
+
+    transporter.sendMail(mailOptions, (error, info) => {
+      if (error) {
+        return res.status(400).send(error);
+      } else {
+        res.status(200).send('Email sent: ' + info.response);
+      }
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(400).send("Could not add the bill");
+  }
+};
     const getbill=async(req,res)=>{
         try{
             const items=await billmodel.find({})
