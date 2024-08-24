@@ -136,43 +136,12 @@ const addbills=async(req,res)=>
                 pass: 'fkgdymbfaqklrcln'
             }
         });
-const emailTemplate = `
-  <div style="font-family: Arial, sans-serif; color: #333; line-height: 1.6;">
-    <div style="text-align: center;">
-      <img src="https://example.com/path/to/your/related-photo.jpg" alt="Thank You Image" style="max-width: 100%; height: auto;">
-    </div>
-    <h2 style="color: #2C3E50;">Thank you, ${data.CustomerName}!</h2>
-    <p>We appreciate your purchase at Bala Footwear. Here are the details of your transaction:</p>
-    <table style="width: 100%; border-collapse: collapse;">
-      <tr>
-        <td style="padding: 8px; border: 1px solid #ddd;"><strong>Customer Name:</strong></td>
-        <td style="padding: 8px; border: 1px solid #ddd;">${data.CustomerName}</td>
-      </tr>
-      <tr>
-        <td style="padding: 8px; border: 1px solid #ddd;"><strong>Total Amount:</strong></td>
-        <td style="padding: 8px; border: 1px solid #ddd;">₹${data.total}</td>
-      </tr>
-      <tr>
-        <td style="padding: 8px; border: 1px solid #ddd;"><strong>Date:</strong></td>
-        <td style="padding: 8px; border: 1px solid #ddd;">${timestamp}</td>
-      </tr>
-    </table>
-    <p>Thank you for shopping with us. We hope to see you again soon!</p>
-    <p>Best regards,<br><strong>Bala Footwear Team</strong></p>
-    <hr style="border-top: 1px solid #ddd;">
-    <div style="text-align: center;">
-      <img src="https://example.com/path/to/your/logo.png" alt="Bala Footwear Logo" style="max-width: 200px;">
-      <p style="margin-top: 10px; font-size: 14px; color: #888;">Contact us: 123-456-7890 | <a href="mailto:support@balafootwear.com">support@balafootwear.com</a></p>
-    </div>
-  </div>
-`;
-
         const info ={
             from: 'bikashmalu1@gmail.com',
             to: req.body.email, 
             subject: "BALA FOOTWEAR",
             text: "hii everyone tuhina is cute",
-            html: emailTemplate, 
+            html: Thank you ${data.CustomerName},for purchasing products with amount ${data.total} from the bala footwear store. Thank you visit again!!, 
           };
     transporter.sendMail(info,(err,result)=>{
         if(err){
